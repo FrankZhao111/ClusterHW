@@ -4,6 +4,8 @@ Personal_HW: gym member segmentation and monthly credit targeting.
 
 This repository contains the supplied assignment, lecture notes, and gym_members.csv. The analysis is being built in stages. Step 1 creates the training and test files; Step 2 standardizes their features using training statistics.
 
+[Run the candidate comparison in Google Colab](https://colab.research.google.com/github/FrankZhao111/ClusterHW/blob/main/kmeans_comparison.ipynb).
+
 ## Step 1: create a reproducible 70/30 split
 
 Randomly reserve 30% of the 330 members for testing and use the remaining 70% for training.
@@ -213,3 +215,43 @@ Using the environment's python.exe directly avoids needing a PowerShell activati
 Microsoft documents block event 3077 in the CodeIntegrity Operational log. In Event Viewer, open **Applications and Services Logs > Microsoft > Windows > CodeIntegrity > Operational**, then inspect recent events for the NumPy file. The event identifies the blocked file and policy. An administrator who manages a business policy can review an appropriate allow rule or approved installation. Smart App Control has no individual-app exception setting according to Microsoft's FAQ.
 
 Sources: [Microsoft App Control troubleshooting](https://learn.microsoft.com/windows/security/application-security/application-control/app-control-for-business/operations/appcontrol-debugging-and-troubleshooting), [Smart App Control FAQ](https://support.microsoft.com/en-us/windows/security/threat-malware-protection/smart-app-control-frequently-asked-questions), [Colab FAQ](https://research.google.com/colaboratory/faq.html), [Python on Windows](https://docs.python.org/3.14/using/windows.html), and [Python virtual environments](https://docs.python.org/3.14/library/venv.html).
+
+## Step 3: compare K-means candidates in Colab
+
+[Open kmeans_comparison.ipynb in Google Colab](https://colab.research.google.com/github/FrankZhao111/ClusterHW/blob/main/kmeans_comparison.ipynb)
+
+This follows the successful environment check and covers the candidate fitting and held-out fit evaluation in Tasks 2 and 3. Open the new notebook and select **Runtime > Run all**. It is self-contained and loads the same frozen input revision as the environment check.
+
+Every candidate uses the six existing standardized feature columns; member_id is excluded. For k=1 through k=8, KMeans fits on the 231 training members and assigns the 99 test members to those existing centers. It does not refit on test members, resplit the data, or fit scaling again.
+
+All candidates use init='k-means++', n_init=20, random_state=42, max_iter=300, tol=1e-4, and algorithm='lloyd'. n_init=20 means twenty initializations, with the lowest training spread retained. Only k varies between candidates.
+
+The code sums each member's squared distance to its assigned center and checks that the training total matches inertia_ and the test total matches -score(X_test). Expected k=1 baseline totals are training 1386.0000 and test 666.1366.
+
+### Outputs
+
+| File | Purpose |
+| --- | --- |
+| fit_metrics.csv | Eight rows: spreads, spreads per member, drops from previous k, reductions versus k=1, and iteration counts |
+| elbow_train_test.png / .svg | Required total-spread curves in adjacent training and test panels |
+| elbow_per_member.png / .svg | Optional comparison after dividing training spread by 231 and test spread by 99 |
+| candidate_assignments.csv | 2,640 rows: each of the 330 members under each of eight candidates, including cluster and squared distance |
+| candidate_centers_scaled.csv | The 36 fitted centers across all candidates, in scaled units |
+| candidate_centers_original.csv | Those centers converted back to original units for interpretation |
+| scaling_parameters.csv | A copy of the six existing training scaling parameter rows |
+| model_checkpoint.json | Portable record of fitted centers, preprocessing, input-data revision, configuration, and software versions |
+
+Files are generated in outputs/kmeans_comparison inside the notebook runtime. A final cell downloads kmeans_outputs.zip containing the results. Extract and upload the CSVs, checkpoint, and charts to GitHub; save the executed notebook as well. The source notebook is prepared for the student to run; its model outputs are not claimed before execution.
+
+### Read the comparison
+
+- Spread is the sum of squared distances from members to their assigned centers, using six standardized features.
+- A drop from previous k equals the preceding spread minus the current spread. The first row's drop is blank because there is no previous candidate.
+- Reduction versus k=1 equals (baseline spread - candidate spread) / baseline spread x 100. This measures spread reduction, not accuracy.
+- The two required panels show totals for different member counts. Use the optional per-member chart to compare magnitudes fairly.
+- Look for diminishing improvements and a similar elbow in the held-out curve. The assignment requests three to five useful segments, but the model comparison must examine k=1 through k=8.
+- Do not automatically copy the lecture example's k=3. If the curves do not support the same elbow, report that and reconsider k as the assignment instructs.
+
+After the run, review fit_metrics.csv and elbow_train_test.png before choosing k. The saved centers and assignments support later segment naming and financial calculations without fitting centers on test or all members.
+
+References: [KMeans documentation](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html) and [Matplotlib savefig documentation](https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.savefig.html).
