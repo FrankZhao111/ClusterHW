@@ -13,44 +13,50 @@ Randomly reserve 30% of the 330 members for testing and use the remaining 70% fo
 - Random seed: 42.
 - Shuffle whole rows before splitting, so every member's values stay together.
 
-The central Python statement is:
+split_data.py uses only Python's standard library. No pip installation is needed for this step.
+
+The central Python statements are:
 
 ```python
-train_df, test_df = train_test_split(
-    df,
-    test_size=0.30,
-    random_state=42,
-    shuffle=True,
-)
+shuffled_rows = rows.copy()
+random.Random(42).shuffle(shuffled_rows)
+test_count = math.ceil(len(rows) * 0.30)
+test_rows = shuffled_rows[:test_count]
+train_rows = shuffled_rows[test_count:]
 ```
 
-| Setting | Meaning |
+| Statement | Meaning |
 | --- | --- |
-| df | The complete original member table |
-| test_size=0.30 | Put 30% of the rows into the test set; the remainder goes into training |
-| random_state=42 | Fix the random seed so the allocation can be reproduced |
-| shuffle=True | Randomize row selection instead of taking the first 70% |
+| rows.copy() | Copy all original member rows |
+| random.Random(42).shuffle(...) | Randomly reorder whole rows using a fixed seed |
+| math.ceil(len(rows) * 0.30) | Reserve 30% of all rows for testing; here this is exactly 99 |
+| shuffled_rows[:test_count] | The first 99 rows after shuffling form the test set |
+| shuffled_rows[test_count:] | The remaining 231 rows form the training set |
 
-The value 42 is an arbitrary seed, not a model parameter chosen for better results. Keep the same seed, original CSV contents and row order, and compatible library versions for a matching rerun. The script prints the installed package versions.
+The value 42 is an arbitrary seed, not a choice made for better model results. Keep the original CSV contents, its row order, the seed, and the Python version fixed for a matching rerun. The script prints the Python version.
+
+This version replaces the earlier pandas/scikit-learn splitter after a Windows Application Control policy blocked a NumPy DLL during import. Python's shuffle and scikit-learn's shuffle do not select identical members from the same numeric seed. Both satisfy the assignment's random 70/30 requirement. Use the CSVs produced by this version for every subsequent stage instead of mixing splits.
 
 ## Run on Windows
 
-1. Get the updated repository. On GitHub, choose **Code > Download ZIP** and extract it. If you already cloned it and have no local changes, you can use **git pull** instead.
-2. Open the extracted project folder containing split_data.py, requirements.txt, and gym_members.csv.
-3. Open a terminal in that folder. In Windows File Explorer, you can type powershell into the address bar and press Enter.
-4. Install the two required packages:
+Get the updated repository through **Code > Download ZIP** and extract it. Open the folder containing split_data.py and gym_members.csv, then open PowerShell there. In File Explorer, you can type powershell into the address bar and press Enter.
 
-```powershell
-py -m pip install -r requirements.txt
-```
-
-5. Run the split script:
+Run:
 
 ```powershell
 py split_data.py
 ```
 
-If your computer uses python instead of py, replace py in both commands with python.
+If your computer uses python instead of py, use python split_data.py.
+
+### Refresh an older local copy
+
+If you already downloaded the project and are in its folder, replace just the script with the current repository version:
+
+```powershell
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FrankZhao111/ClusterHW/main/split_data.py" -OutFile ".\split_data.py"
+py .\split_data.py
+```
 
 ## Files created on your computer
 
@@ -59,7 +65,7 @@ If your computer uses python instead of py, replace py in both commands with pyt
 | data/train_members.csv | 231 | 7 | Fit the scaler and cluster centers in the next stage |
 | data/test_members.csv | 99 | 7 | Evaluate the fitted models using unseen members |
 
-Each CSV also has a header row. The data folder is created automatically beside the script. All seven original columns are retained, including member_id for checking membership. member_id will be excluded from model features in the later modeling stage. index=False prevents an extra row-number column from being written.
+Each CSV also has a header row. The data folder is created automatically beside the script. All seven original columns are retained, including member_id for checking membership. member_id will be excluded from model features in the later modeling stage. The CSV writer preserves the original values without adding a row-index column.
 
 Expected summary:
 
@@ -71,9 +77,9 @@ Member overlap: 0
 Random seed: 42
 ```
 
-The script also prints both saved file paths and the pandas, scikit-learn, and numpy versions. It checks that the input has the expected shape and columns, IDs are unique, the two sets do not overlap, and their union contains every source member.
+The script also prints the split method, Python version, and both saved file paths. It checks that the input has the expected shape and columns, IDs are unique, the two sets do not overlap, and their union contains every source member.
 
-Rerunning the script overwrites the two generated CSVs. With the same input, settings, and software behavior, the result is the same split.
+Rerunning the script overwrites the two generated CSVs. With the same input, seed, and Python version, the result is the same split.
 
 ## How to use the split in later steps
 
@@ -81,6 +87,8 @@ Keep this one split throughout the analysis. Fit StandardScaler and KMeans on tr
 
 After the local run, upload the generated data folder to this repository so the saved split is available alongside the code.
 
+requirements.txt lists pandas and scikit-learn for the later modeling stage. That stage needs an environment where their NumPy dependency can load successfully; the standard-library splitter does not repair the separate Windows DLL policy issue.
+
 The final submission is one PDF containing a title page and two content slides. The assignment permits AI assistance with code and chart-generating code; the student writes and assembles the slides.
 
-Reference: [scikit-learn train_test_split documentation](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html).
+References: [Python csv documentation](https://docs.python.org/3.14/library/csv.html) and [Python random documentation](https://docs.python.org/3.14/library/random.html).
