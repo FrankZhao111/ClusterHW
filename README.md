@@ -172,3 +172,44 @@ requirements.txt lists pandas and scikit-learn for the later modeling stage. Tha
 The final submission is one PDF containing a title page and two content slides. The assignment permits AI assistance with code and chart-generating code; the student writes and assembles the slides.
 
 References: [Python csv documentation](https://docs.python.org/3.14/library/csv.html), [Python random documentation](https://docs.python.org/3.14/library/random.html), [Python statistics documentation](https://docs.python.org/3.14/library/statistics.html), and [StandardScaler documentation](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html).
+
+## Windows DLL block: run the modeling environment check
+
+The Windows error `An Application Control policy has blocked this file` occurs while importing a compiled NumPy component. The traceback alone does not establish whether Smart App Control or an organization-managed App Control policy caused it. A virtual environment isolates packages but does not override a Windows application-control decision.
+
+### Recommended assignment workaround: Google Colab
+
+[Open environment_check.ipynb in Google Colab](https://colab.research.google.com/github/FrankZhao111/ClusterHW/blob/main/environment_check.ipynb)
+
+1. Open the link and sign in to Google if prompted.
+2. Keep the standard hosted CPU runtime; a GPU is unnecessary.
+3. Choose **Runtime > Run all**. Review and run the notebook code when Colab asks.
+4. Look for `Environment check passed: imports, data checks, and K-means fitting work.`
+
+The notebook installs missing modeling packages, prints their versions, explicitly imports numpy.random, loads the existing raw/scaled CSVs and scaling parameters from a pinned GitHub commit, checks the transformations, and fits k=1. Expected training spread is 1386.0000 and expected test spread is 666.1366.
+
+This cloud-runtime workaround leaves local Windows security settings and the existing data preparation intact. The notebook has been prepared for the user to execute; no successful Colab run is claimed before its output is available.
+
+### Optional local troubleshooting attempt
+
+A fresh Python 3.13 environment uses a different Python/package build combination from the failing global Python 3.14 installation. This is a troubleshooting attempt, not a confirmed fix for an application-control block.
+
+If the Python install manager is available, run these commands from the project folder:
+
+```powershell
+py install 3.13
+py -3.13 -m venv .venv-kmeans
+.\.venv-kmeans\Scripts\python.exe -m pip install --upgrade pip
+.\.venv-kmeans\Scripts\python.exe -m pip install --only-binary=:all: numpy scipy pandas scikit-learn matplotlib
+.\.venv-kmeans\Scripts\python.exe -c "import numpy.random; from sklearn.cluster import KMeans; print('Ready for K-means')"
+```
+
+If `py install` is unavailable, use the [official Python downloads](https://www.python.org/downloads/windows/) or install the [Python install manager](https://www.python.org/downloads/), then create the environment with the selected Python 3.13 interpreter.
+
+Using the environment's python.exe directly avoids needing a PowerShell activation script. The binary-only install requests existing wheels rather than a local source build. If the same Application Control error persists, the new environment did not resolve the policy issue; use the hosted notebook for the assignment.
+
+### Identify the local policy for a permanent repair
+
+Microsoft documents block event 3077 in the CodeIntegrity Operational log. In Event Viewer, open **Applications and Services Logs > Microsoft > Windows > CodeIntegrity > Operational**, then inspect recent events for the NumPy file. The event identifies the blocked file and policy. An administrator who manages a business policy can review an appropriate allow rule or approved installation. Smart App Control has no individual-app exception setting according to Microsoft's FAQ.
+
+Sources: [Microsoft App Control troubleshooting](https://learn.microsoft.com/windows/security/application-security/application-control/app-control-for-business/operations/appcontrol-debugging-and-troubleshooting), [Smart App Control FAQ](https://support.microsoft.com/en-us/windows/security/threat-malware-protection/smart-app-control-frequently-asked-questions), [Colab FAQ](https://research.google.com/colaboratory/faq.html), [Python on Windows](https://docs.python.org/3.14/using/windows.html), and [Python virtual environments](https://docs.python.org/3.14/library/venv.html).
