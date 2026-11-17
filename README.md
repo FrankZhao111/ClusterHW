@@ -6,6 +6,8 @@ This repository contains the supplied assignment, lecture notes, and gym_members
 
 [Run the candidate comparison in Google Colab](https://colab.research.google.com/github/FrankZhao111/ClusterHW/blob/main/kmeans_comparison.ipynb).
 
+[Run the four-segment business analysis and Excel export in Colab](https://colab.research.google.com/github/FrankZhao111/ClusterHW/blob/main/business_decision.ipynb).
+
 ## Step 1: create a reproducible 70/30 split
 
 Randomly reserve 30% of the 330 members for testing and use the remaining 70% for training.
@@ -255,3 +257,72 @@ Files are generated in outputs/kmeans_comparison inside the notebook runtime. A 
 After the run, review fit_metrics.csv and elbow_train_test.png before choosing k. The saved centers and assignments support later segment naming and financial calculations without fitting centers on test or all members.
 
 References: [KMeans documentation](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html) and [Matplotlib savefig documentation](https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.savefig.html).
+
+## Step 4: describe segments, decide the credit policy, and quantify value
+
+[Open business_decision.ipynb in Google Colab](https://colab.research.google.com/github/FrankZhao111/ClusterHW/blob/main/business_decision.ipynb)
+
+Select **Runtime > Run all**. The notebook loads a pinned version of business_analysis.py, reuses the saved k=4 centers, and creates business_outputs.zip. No new clustering fit is performed. This covers the interpretation, new-member function, and member-level financial calculations.
+
+Python is the assignment's requested computational method. The Excel and CSV files are supporting analysis outputs; the final submission remains one PDF containing a title page and two student-written content slides.
+
+### Policy and assumptions
+
+Each credited member spending below 20 dollars on extras contributes 25 x 60% - 10 = +5 dollars per month. Every credited member spending 20 dollars or more contributes -10 dollars. An uncredited member contributes zero incremental value from the credit policy.
+
+Choose eligibility using training members only: give a segment the credit if its sum of training-member contributions is positive. A break-even segment receives no credit. Then apply the fixed segment policy to every historical member, including the test members. This separates policy choice from the required full-330-member simulation.
+
+The expected segment eligibility flags are cluster 0: yes; clusters 1, 2, and 3: no. Cluster 1 has training contribution exactly zero, although its average extras spend is below 20. Member counts and individual spending, rather than a centroid's average spend, determine profitability.
+
+Expected monthly totals for the supplied data:
+
+| Plan | Recipients | Added extras revenue | Added margin | Credit cost | Net contribution |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Baseline: everyone | 330 | 3500 | 2100 | 3300 | -1200 |
+| V1: cluster 0 | 70 | 1475 | 885 | 700 | 185 |
+
+The improvement is 185 - (-1200) = 1385 dollars per month. These are incremental contributions under the provided assumptions, not total gym profit or measured campaign effects.
+
+The supplied new member is an example outside the 330-member population. It maps to cluster 0 and receives the credit; it is not added to plan totals.
+
+### Excel workbook
+
+business_analysis.xlsx contains a Guide and separate sheets for assumptions, scaling, saved centers, member-level calculations, training-based segment policy, training-centroid summaries, full-population profiles, plan comparison, contribution by split, model-fit comparison, and the new member.
+
+Financial calculations, segment decisions, scaling, inverse scaling, fit reductions, and the new-member prediction have visible Excel formulas. Python supplies cached results for spreadsheet previews; Excel recalculates formulas on opening. Blue assumption and new-member input cells support what-if inspection. Historical data and fitted centers are fixed source records; changing them requires rerunning the Python workflow.
+
+The writer checks key formula caches and formula presence using openpyxl. Those checks do not substitute for Excel's formula calculation engine.
+
+### CSV and JSON outputs
+
+| File | Meaning |
+| --- | --- |
+| segment_summary.csv | Counts for all 330 members plus training-centroid characteristics |
+| segment_population_profile.csv | Means across all members assigned to each segment |
+| segment_policy.csv | Training-based eligibility, individual-spend counts, and segment economics |
+| member_audit.csv | One row per historical member; both policies' costs and contributions |
+| plan_comparison.csv | Baseline, V1, and V1-minus-baseline monthly values |
+| value_by_split.csv | Training, test, and all-member contribution totals |
+| model_fit_summary.csv | Baseline versus k=4 spread and reduction on training and test members |
+| fit_metrics.csv | The original eight candidate results |
+| scaling_parameters.csv / selected_centers.csv | The preprocessing and frozen centers used by inference |
+| new_member_summary.csv | Segment and credit decision for the supplied example |
+| new_member_scaling.csv / new_member_distances.csv | Every scaling input and distance used in that example |
+| selected_model.json | Selected model, feature order, scaling, policy, assumptions, revisions, and source hash |
+| validation_checks.json | Workbook cache/structure checks completed during the notebook run |
+
+The ZIP also contains business_analysis.py. Upload the extracted outputs to GitHub in a business_outputs folder and preserve the executed notebook.
+
+### One-member function
+
+```python
+recommend_offer = analysis.make_recommender(results['selected_model'])
+recommend_offer({
+    'age': 30, 'visits_per_month': 4, 'avg_visit_minutes': 42,
+    'classes_per_month': 1, 'months_member': 5, 'monthly_extras_spend': 10,
+})
+```
+
+The returned function has one input argument and reports cluster, segment, credit eligibility, credit amount, and distance to the selected center. Its output is checked against all 330 historical assignments and policy flags during the analysis run.
+
+Source modules and notebook contents are prepared and saved in GitHub. The notebook's actual execution and workbook generation occur when the student runs it in Colab.
