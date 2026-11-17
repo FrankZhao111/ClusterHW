@@ -1,0 +1,4 @@
+plan,members,recipients,incremental_revenue,incremental_margin,credit_cost,net
+Baseline: credit to everyone,330,330,3500,2100,3300,-1200
+V1: selected segments,330,70,1475,885,700,185
+Change: V1 minus baseline,0,-260,-2025,-1215,-2600,1385

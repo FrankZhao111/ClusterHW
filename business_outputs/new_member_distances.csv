@@ -1,0 +1,5 @@
+cluster,segment,squared_distance,distance,gets_credit,selected
+0,"Newer, occasional visitors",0.093107098939404553,0.30513455874319539,1,1
+1,Long-standing older regulars,19.161767900879653,4.3774156646221813,0,0
+2,Frequent visitors,11.285650526104634,3.3594122292604451,0,0
+3,Class-oriented regulars,12.607335315885727,3.5506809650946853,0,0

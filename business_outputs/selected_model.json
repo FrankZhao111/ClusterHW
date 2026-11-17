@@ -1,0 +1,106 @@
+{
+  "selected_k": 4,
+  "features": [
+    "age",
+    "visits_per_month",
+    "avg_visit_minutes",
+    "classes_per_month",
+    "months_member",
+    "monthly_extras_spend"
+  ],
+  "results_commit": "7c112af30611d319c2f21a0d197e3cf34c010357",
+  "data_commit": "24cd0a915b7a3ee05f6a4635190d05130385f25b",
+  "analysis_source_sha256": "aa3b3bbe3f7ffbd66b3c49bd26dec9927ccfdcaa1202962bdefd74950f3dda64",
+  "scaling": {
+    "mean": [
+      40.24675324675325,
+      10.61038961038961,
+      53.268398268398265,
+      3.203463203463204,
+      28.004329004329005,
+      26.484848484848484
+    ],
+    "std": [
+      13.328505900706704,
+      5.067054723520111,
+      11.639862710872595,
+      2.7425122219612903,
+      18.44225757266731,
+      17.921388823358406
+    ],
+    "ddof": 0
+  },
+  "centers_scaled": [
+    [
+      -0.9443803283307803,
+      -1.46414448895739,
+      -1.1362543876531177,
+      -0.8422373339633602,
+      -1.182764070867061,
+      -0.9732669418245734
+    ],
+    [
+      1.792856909403243,
+      0.24135198644433378,
+      -0.44852584179558874,
+      0.24703232753678508,
+      1.7077991060242936,
+      -0.5983321844436317
+    ],
+    [
+      -0.5096910309399131,
+      1.0583946721653037,
+      0.8394945863471612,
+      -0.7742766600852643,
+      0.039529017861932636,
+      -0.07690150756539142
+    ],
+    [
+      0.10914496353886567,
+      -0.3089789979412309,
+      0.13850668058319818,
+      1.3026947230765342,
+      -0.28510936510318524,
+      1.1438971802954008
+    ]
+  ],
+  "segment_names": {
+    "0": "Newer, occasional visitors",
+    "1": "Long-standing older regulars",
+    "2": "Frequent visitors",
+    "3": "Class-oriented regulars"
+  },
+  "eligible_clusters": [
+    0
+  ],
+  "policy_basis": "Positive training-member incremental contribution; zero means no credit",
+  "finance_assumptions": {
+    "spend_threshold": 20.0,
+    "credit_cost": 10.0,
+    "incremental_spend": 25.0,
+    "extras_margin": 0.6
+  },
+  "fit_configuration": {
+    "init": "k-means++",
+    "n_init": 20,
+    "random_state": 42,
+    "max_iter": 300,
+    "tol": 0.0001,
+    "algorithm": "lloyd"
+  },
+  "fit_versions": {
+    "python": "3.13.18",
+    "numpy": "2.4.6",
+    "scipy": "1.16.3",
+    "pandas": "2.2.3",
+    "scikit-learn": "1.6.1",
+    "matplotlib": "3.10.0"
+  },
+  "analysis_versions": {
+    "python": "3.13.18",
+    "numpy": "2.4.6",
+    "pandas": "2.2.3",
+    "xlsxwriter": "3.3.1",
+    "openpyxl": "3.1.5"
+  }
+}

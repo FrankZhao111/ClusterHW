@@ -1,0 +1,4 @@
+split,members,baseline_net,v1_recipients,v1_net,improvement
+train,231,-855,47,160,1015
+test,99,-345,23,25,370
+all,330,-1200,70,185,1385

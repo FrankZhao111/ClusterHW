@@ -1,0 +1,5 @@
+cluster,segment,training_members,training_low_spenders,training_high_spenders,training_low_share,training_net_if_credit,gets_credit,policy_reason,all_members,all_low_spenders,all_high_spenders,all_net_if_credit,v1_net
+0,"Newer, occasional visitors",47,42,5,0.8936170212765957,160,1,Positive training contribution,70,59,11,185,185
+1,Long-standing older regulars,42,28,14,0.66666666666666663,0,0,Break-even: no credit,60,37,23,-45,-0
+2,Frequent visitors,75,27,48,0.35999999999999999,-345,0,Negative training contribution,110,43,67,-455,-0
+3,Class-oriented regulars,67,0,67,0,-670,0,Negative training contribution,90,1,89,-885,-0

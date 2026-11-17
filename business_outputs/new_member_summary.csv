@@ -1,0 +1,2 @@
+age,visits_per_month,avg_visit_minutes,classes_per_month,months_member,monthly_extras_spend,cluster,segment,gets_credit,credit_amount,squared_distance,distance
+30,4,42,1,5,10,0,"Newer, occasional visitors",True,10,0.093107098939404553,0.30513455874319539
